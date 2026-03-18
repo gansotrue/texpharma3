@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Texpharma — Produtos Médicos Hospitalares</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0a1628;--navy-mid:#132040;--teal:#0d9488;
+  --teal-light:#14b8a6;--teal-glow:#5eead4;
+  --white:#f8fafc;--gray:#94a3b8;--gray-light:#e2e8f0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);overflow:hidden}
+
+/* ═══ NAVBAR ═══ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:68px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;
+  background:rgba(10,22,40,.97);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(13,148,136,.2);
+}
+.nav-logo img{height:46px;width:auto;object-fit:contain;display:block}
+.nav-logo-fallback{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:var(--white)}
+.nav-logo-fallback span{color:var(--teal-light)}
+
+/* TAB MENU */
+.nav-tabs{display:flex;gap:4px;list-style:none;align-items:center}
+.nav-tabs li a{
+  display:flex;align-items:center;gap:7px;
+  color:var(--gray);font-size:.82rem;font-weight:600;
+  text-decoration:none;letter-spacing:.6px;text-transform:uppercase;
+  padding:8px 16px;border-radius:8px;
+  transition:color .2s,background .2s;
+  cursor:pointer;
+}
+.nav-tabs li a:hover{color:var(--white);background:rgba(255,255,255,.06)}
+.nav-tabs li a.active{color:var(--teal-light);background:rgba(13,148,136,.12);}
+.nav-tabs li a .tab-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--teal-light);
+  opacity:0;transform:scale(0);
+  transition:opacity .2s,transform .2s;
+}
+.nav-tabs li a.active .tab-dot{opacity:1;transform:scale(1)}
+
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-cta{
+  background:var(--teal);color:#fff;
+  padding:9px 20px;border-radius:50px;
+  font-size:.8rem;font-weight:700;text-decoration:none;
+  letter-spacing:.5px;text-transform:uppercase;
+  transition:background .2s,transform .2s;
+  white-space:nowrap;
+}
+.nav-cta:hover{background:var(--teal-light);transform:translateY(-1px)}
+
+/* hamburger */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;z-index:201}
+.hamburger span{width:24px;height:2px;background:var(--white);border-radius:2px;transition:.3s}
+.mobile-menu{display:none;position:fixed;inset:0;background:var(--navy);z-index:199;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding-top:68px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-size:1.1rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gray);text-decoration:none;padding:12px 28px;border-radius:10px;transition:color .2s,background .2s}
+.mobile-menu a:hover,.mobile-menu a.active{color:var(--teal-light);background:rgba(13,148,136,.1)}
+
+/* ═══ PAGE SYSTEM ═══ */
+.pages-wrap{position:fixed;top:68px;left:0;right:0;bottom:0;overflow:hidden}
+.page{
+  position:absolute;inset:0;
+  overflow-y:auto;overflow-x:hidden;
+  opacity:0;pointer-events:none;
+  transform:translateX(30px);
+  transition:opacity .35s ease,transform .35s ease;
+}
+.page.active{opacity:1;pointer-events:all;transform:translateX(0)}
+.page.exit-left{opacity:0;transform:translateX(-30px)}
+
+/* ═══ PAGE: INÍCIO ═══ */
+#page-inicio{
+  display:flex;align-items:center;
+  padding:60px 60px 40px;
+  min-height:100%;
+  background:
+    radial-gradient(ellipse 70% 60% at 75% 50%,rgba(13,148,136,.18) 0%,transparent 70%),
+    radial-gradient(ellipse 45% 45% at 15% 85%,rgba(13,148,136,.1) 0%,transparent 60%),
+    linear-gradient(135deg,#0a1628 0%,#0d1e3a 100%);
+  position:relative;overflow:hidden;
+}
+.hero-grid-bg{position:absolute;inset:0;opacity:.04;background-image:linear-gradient(var(--teal) 1px,transparent 1px),linear-gradient(90deg,var(--teal) 1px,transparent 1px);background-size:60px 60px;pointer-events:none}
+.hero-left{position:relative;z-index:1;max-width:580px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(13,148,136,.15);border:1px solid rgba(13,148,136,.4);color:var(--teal-glow);font-size:.75rem;font-weight:700;padding:7px 16px;border-radius:50px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:26px;animation:fadeUp .7s ease both}
+.hero-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--teal-light);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero-left h1{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,4.5vw,3.8rem);font-weight:900;line-height:1.1;margin-bottom:22px;animation:fadeUp .7s .08s ease both}
+.hero-left h1 em{color:var(--teal-light);font-style:normal}
+.hero-left p{font-size:1rem;color:var(--gray);line-height:1.8;max-width:480px;margin-bottom:36px;animation:fadeUp .7s .16s ease both}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;animation:fadeUp .7s .24s ease both}
+.hero-right{position:absolute;right:0;top:0;bottom:0;width:45%;display:flex;align-items:center;justify-content:center;z-index:1}
+.hero-circle-wrap{position:relative;width:420px;height:420px}
+.hero-circle-wrap svg{position:absolute;inset:0;width:100%;height:100%}
+.hero-products-preview{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:10px;padding:56px}
+.preview-item{
+  background:rgba(13,148,136,.07);
+  border:1px solid rgba(13,148,136,.2);
+  border-radius:16px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;overflow:hidden;
+  transition:border-color .3s,transform .3s,background .3s;
+  padding:10px 8px 6px;gap:4px;
+}
+.preview-item:hover{border-color:rgba(13,148,136,.6);transform:scale(1.04);background:rgba(13,148,136,.13)}
+.preview-item img{width:100%;height:78%;object-fit:contain}
+.preview-item span{font-size:.6rem;font-weight:700;color:var(--teal-light);letter-spacing:.8px;text-transform:uppercase;text-align:center;opacity:.85}
+
+.hero-stats-row{
+  position:absolute;bottom:36px;right:48px;z-index:2;
+  display:flex;gap:40px;
+  animation:fadeUp .7s .32s ease both;
+}
+.stat-box{text-align:center}
+.stat-n{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--teal-light);line-height:1}
+.stat-l{font-size:.7rem;color:var(--gray);margin-top:3px;text-transform:uppercase;letter-spacing:1px}
+
+/* diferenciais strip na página início */
+.features-strip{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+  margin-top:32px;animation:fadeUp .7s .32s ease both;
+}
+.feat-item{
+  background:rgba(255,255,255,.04);border:1px solid rgba(13,148,136,.12);
+  border-radius:12px;padding:16px 18px;
+  display:flex;align-items:flex-start;gap:12px;
+  transition:border-color .25s,background .25s;
+}
+.feat-item:hover{border-color:var(--teal);background:rgba(13,148,136,.07)}
+.feat-icon{font-size:1.2rem;margin-top:2px}
+.feat-item h4{font-size:.82rem;font-weight:700;margin-bottom:3px}
+.feat-item p{font-size:.76rem;color:var(--gray);line-height:1.5}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ PAGE: PRODUTOS ═══ */
+#page-produtos{padding:40px 48px 48px;background:var(--navy)}
+.page-header{margin-bottom:32px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.page-label{font-size:.72rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal-light);margin-bottom:8px}
+.page-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:900;line-height:1.15}
+.page-title em{color:var(--teal-light);font-style:normal}
+
+/* filter tabs */
+.filter-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.filter-btn{
+  padding:7px 16px;border-radius:50px;font-size:.78rem;font-weight:600;
+  border:1.5px solid rgba(13,148,136,.2);background:transparent;
+  color:var(--gray);cursor:pointer;transition:all .2s;
+}
+.filter-btn:hover{border-color:var(--teal-light);color:var(--white)}
+.filter-btn.active{background:var(--teal);border-color:var(--teal);color:#fff}
+
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+.product-card{background:var(--navy-mid);border:1px solid rgba(13,148,136,.1);border-radius:18px;overflow:hidden;transition:transform .3s,border-color .3s,box-shadow .3s;cursor:pointer}
+.product-card:hover{transform:translateY(-5px);border-color:var(--teal);box-shadow:0 16px 48px rgba(13,148,136,.2)}
+.product-img-wrap{height:170px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.04);position:relative;overflow:hidden}
+.product-img-wrap img{width:100%;height:100%;object-fit:contain;padding:14px;transition:transform .4s}
+.product-card:hover .product-img-wrap img{transform:scale(1.07)}
+.product-img-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 55%,var(--navy-mid));pointer-events:none}
+.product-body{padding:18px}
+.p-tag{font-size:.67rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal-light);margin-bottom:6px}
+.product-body h3{font-size:.92rem;font-weight:600;margin-bottom:6px;line-height:1.3}
+.product-body p{font-size:.78rem;color:var(--gray);line-height:1.5;margin-bottom:14px}
+.p-btn{display:inline-flex;align-items:center;gap:6px;color:var(--teal-light);font-size:.78rem;font-weight:600;transition:gap .2s}
+.p-btn:hover{gap:12px}
+.p-btn::after{content:'→'}
+.store-card{background:linear-gradient(135deg,rgba(13,148,136,.22),rgba(13,148,136,.06));border-color:rgba(13,148,136,.4)!important}
+.store-card:hover{box-shadow:0 16px 48px rgba(13,148,136,.3)!important}
+
+/* ═══ PAGE: SOBRE ═══ */
+#page-sobre{padding:48px;background:linear-gradient(135deg,var(--navy-mid) 0%,var(--navy) 100%);min-height:100%}
+.sobre-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;max-width:1100px;margin:0 auto}
+.sobre-card{background:rgba(13,148,136,.08);border:1px solid rgba(13,148,136,.2);border-radius:22px;overflow:hidden;padding:48px;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative}
+.sobre-logo{max-width:200px;width:100%;margin-bottom:20px}
+.sobre-badge{position:absolute;top:20px;right:20px;background:var(--teal);color:#fff;padding:8px 16px;border-radius:50px;font-size:.76rem;font-weight:700}
+.sobre-card p{color:var(--gray);font-size:.92rem;line-height:1.7}
+.sobre-right h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:900;line-height:1.2;margin-bottom:14px}
+.sobre-right h2 em{color:var(--teal-light);font-style:normal}
+.sobre-right>p{color:var(--gray);font-size:.95rem;line-height:1.75;margin-bottom:28px}
+.about-list{list-style:none;display:flex;flex-direction:column;gap:12px}
+.about-list li{display:flex;align-items:flex-start;gap:12px;font-size:.9rem;color:var(--gray);line-height:1.6}
+.about-list li::before{content:'✓';min-width:24px;height:24px;background:rgba(13,148,136,.2);color:var(--teal-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.74rem;font-weight:700;margin-top:1px;flex-shrink:0}
+.numbers-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+.num-card{background:rgba(255,255,255,.04);border:1px solid rgba(13,148,136,.12);border-radius:14px;padding:20px;text-align:center}
+.num-n{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--teal-light)}
+.num-l{font-size:.74rem;color:var(--gray);margin-top:4px;text-transform:uppercase;letter-spacing:.8px}
+
+/* ═══ PAGE: CONTATO ═══ */
+#page-contato{padding:48px;background:var(--navy);min-height:100%}
+.contato-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:56px;max-width:1100px;margin:0 auto}
+.contact-cards{display:flex;flex-direction:column;gap:16px;margin-top:28px}
+.c-card{display:flex;gap:14px;align-items:flex-start;padding:20px;border-radius:14px;border:1px solid rgba(13,148,136,.12);transition:border-color .25s,background .25s}
+.c-card:hover{border-color:var(--teal);background:rgba(13,148,136,.05)}
+.c-icon{font-size:1.2rem;width:42px;height:42px;min-width:42px;background:rgba(13,148,136,.15);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.c-card h4{font-size:.72rem;color:var(--teal-light);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.c-card p,.c-card a{font-size:.9rem;color:var(--gray);text-decoration:none;line-height:1.6}
+.c-card a:hover{color:var(--teal-light)}
+.map-placeholder{margin-top:16px;background:rgba(13,148,136,.07);border:1px solid rgba(13,148,136,.15);border-radius:14px;padding:24px;text-align:center}
+.map-placeholder p{color:var(--gray);font-size:.85rem;margin-top:8px}
+
+/* FORM */
+.form-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:22px}
+.contact-form{display:flex;flex-direction:column;gap:14px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group label{font-size:.72rem;font-weight:700;color:var(--gray);letter-spacing:.5px;text-transform:uppercase}
+.form-group input,.form-group textarea,.form-group select{background:rgba(255,255,255,.04);border:1.5px solid rgba(13,148,136,.18);border-radius:10px;color:var(--white);padding:11px 14px;font-size:.9rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s,background .2s;resize:vertical}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--teal);background:rgba(13,148,136,.06)}
+.form-group select option{background:var(--navy-mid)}
+.form-submit{background:var(--teal);color:#fff;padding:13px 32px;border-radius:50px;font-size:.92rem;font-weight:700;border:none;cursor:pointer;transition:background .2s,transform .2s;box-shadow:0 6px 24px rgba(13,148,136,.3);align-self:flex-start}
+.form-submit:hover{background:var(--teal-light);transform:translateY(-2px)}
+
+/* ═══ BUTTONS ═══ */
+.btn-primary{background:var(--teal);color:#fff;padding:13px 30px;border-radius:50px;font-size:.9rem;font-weight:700;text-decoration:none;border:none;cursor:pointer;transition:background .2s,transform .2s,box-shadow .2s;box-shadow:0 8px 28px rgba(13,148,136,.35);display:inline-block}
+.btn-primary:hover{background:var(--teal-light);transform:translateY(-2px);box-shadow:0 12px 36px rgba(13,148,136,.5)}
+.btn-ghost{background:transparent;color:var(--white);padding:13px 30px;border-radius:50px;font-size:.9rem;font-weight:700;text-decoration:none;border:1.5px solid rgba(255,255,255,.2);cursor:pointer;transition:border-color .2s,color .2s,transform .2s;display:inline-block}
+.btn-ghost:hover{border-color:var(--teal-light);color:var(--teal-light);transform:translateY(-2px)}
+
+/* ═══ MODAL ═══ */
+.modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(6,14,26,.9);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--navy-mid);border:1px solid rgba(13,148,136,.3);border-radius:22px;padding:40px;max-width:480px;width:92%;transform:scale(.9);transition:transform .3s;position:relative}
+.modal-overlay.open .modal{transform:scale(1)}
+.modal-img{width:100%;height:180px;object-fit:contain;border-radius:12px;background:rgba(255,255,255,.05);padding:10px;margin-bottom:20px}
+.modal h2{font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:8px}
+.modal p{color:var(--gray);font-size:.9rem;line-height:1.75;margin-bottom:22px}
+.modal-close{position:absolute;top:16px;right:20px;background:none;border:none;color:var(--gray);font-size:1.5rem;cursor:pointer;line-height:1;transition:color .2s}
+.modal-close:hover{color:var(--white)}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap}
+
+/* ═══ TOAST ═══ */
+.toast{position:fixed;bottom:28px;right:28px;z-index:400;background:var(--teal);color:#fff;padding:14px 24px;border-radius:12px;font-weight:700;font-size:.88rem;box-shadow:0 8px 28px rgba(13,148,136,.5);transform:translateY(80px);opacity:0;transition:transform .35s,opacity .35s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ═══ SCROLLBAR ═══ */
+.page::-webkit-scrollbar{width:6px}
+.page::-webkit-scrollbar-track{background:transparent}
+.page::-webkit-scrollbar-thumb{background:rgba(13,148,136,.3);border-radius:3px}
+.page::-webkit-scrollbar-thumb:hover{background:rgba(13,148,136,.6)}
+
+/* ═══ FOOTER BAR ═══ */
+.footer-bar{
+  text-align:center;padding:28px 24px 32px;
+  border-top:1px solid rgba(13,148,136,.1);
+  margin-top:24px;
+}
+.footer-bar p{color:var(--gray);font-size:.78rem}
+.footer-bar span{color:var(--teal-light)}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:900px){
+  nav{padding:0 20px}
+  .nav-tabs{display:none}
+  .hamburger{display:flex}
+  #page-inicio{padding:28px 22px 100px;flex-direction:column;align-items:flex-start;overflow-y:auto}
+  .hero-right{display:none}
+  .hero-stats-row{right:22px;bottom:20px;gap:22px}
+  .stat-n{font-size:1.7rem}
+  .features-strip{grid-template-columns:1fr 1fr}
+  #page-produtos{padding:28px 20px 40px}
+  #page-sobre{padding:28px 20px 40px}
+  .sobre-grid{grid-template-columns:1fr;gap:28px}
+  #page-contato{padding:28px 20px 40px}
+  .contato-grid{grid-template-columns:1fr;gap:28px}
+  .form-row{grid-template-columns:1fr}
+  .numbers-row{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:600px){
+  .features-strip{grid-template-columns:1fr}
+  .numbers-row{grid-template-columns:1fr 1fr}
+  .products-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAVBAR ═══ -->
+<nav>
+  <div class="nav-logo">
+    <img src="https://images.builderservices.io/s/cdn/v1.0/i/m?url=https%3A%2F%2Fstorage.googleapis.com%2Fproduction-hostgator-brasil-v1-0-0%2F850%2F1039850%2FDfvclqUD%2F76140231edaa426fbb109137a9bb157c&methods=resize%2C500%2C5000"
+         alt="Texpharma"
+         onerror="this.style.display='none';document.querySelector('.nav-logo-fallback').style.display='block'">
+    <span class="nav-logo-fallback" style="display:none">Tex<span>pharma</span></span>
+  </div>
+
+  <ul class="nav-tabs">
+    <li><a href="#" class="active" data-page="inicio"><span class="tab-dot"></span>Início</a></li>
+    <li><a href="#" data-page="produtos"><span class="tab-dot"></span>Produtos</a></li>
+    <li><a href="#" data-page="sobre"><span class="tab-dot"></span>Sobre Nós</a></li>
+    <li><a href="#" data-page="contato"><span class="tab-dot"></span>Contato</a></li>
+  </ul>
+
+  <div class="nav-right">
+    <a href="http://www.lojatexpharma.com.br" target="_blank" class="nav-cta">🛒 Loja Online</a>
+    <div class="hamburger" onclick="toggleMobile()"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#" class="active" data-page="inicio">Início</a>
+  <a href="#" data-page="produtos">Produtos</a>
+  <a href="#" data-page="sobre">Sobre Nós</a>
+  <a href="#" data-page="contato">Contato</a>
+  <a href="http://www.lojatexpharma.com.br" target="_blank" style="color:var(--teal-light)">🛒 Loja Online</a>
+</div>
+
+<!-- ═══ PAGES WRAPPER ═══ -->
+<div class="pages-wrap">
+
+  <!-- ════ PAGE: INÍCIO ════ -->
+  <div class="page active" id="page-inicio">
+    <div class="hero-grid-bg"></div>
+
+    <div class="hero-left">
+      <div class="hero-badge">Fabricante Nacional</div>
+      <h1>Qualidade em cada<br><em>produto hospitalar</em></h1>
+      <p>Há mais de 20 anos fabricando produtos médicos têxteis com alto padrão de qualidade, tecnologia moderna e preços competitivos para todo o Brasil.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="#" data-page="produtos">Ver Produtos</a>
+        <a class="btn-ghost"   href="#" data-page="contato">Solicitar Cotação</a>
+      </div>
+
+      <div class="features-strip">
+        <div class="feat-item"><span class="feat-icon">🏭</span><div><h4>Fabricação Própria</h4><p>Maquinário moderno e alta capacidade produtiva.</p></div></div>
+        <div class="feat-item"><span class="feat-icon">✅</span><div><h4>Registro ANVISA</h4><p>Todos os produtos seguem normativas brasileiras.</p></div></div>
+        <div class="feat-item"><span class="feat-icon">🚚</span><div><h4>Entrega Nacional</h4><p>Cobertura em capitais e interiores do Brasil.</p></div></div>
+        <div class="feat-item"><span class="feat-icon">💰</span><div><h4>Melhor Preço</h4><p>Ótimo custo-benefício no varejo e atacado.</p></div></div>
+        <div class="feat-item"><span class="feat-icon">🤝</span><div><h4>Equipe Especializada</h4><p>Consultores prontos para atender sua demanda.</p></div></div>
+        <div class="feat-item"><span class="feat-icon">⚡</span><div><h4>Faturamento Ágil</h4><p>Pedidos processados com rapidez e eficiência.</p></div></div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-circle-wrap">
+        <svg viewBox="0 0 420 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="210" cy="210" r="195" stroke="#14b8a6" stroke-width="1" stroke-dasharray="6 5" opacity=".25"/>
+          <circle cx="210" cy="210" r="150" stroke="#14b8a6" stroke-width="1" opacity=".15"/>
+          <circle cx="210" cy="210" r="100" stroke="#14b8a6" stroke-width="1" opacity=".1"/>
+        </svg>
+        <div class="hero-products-preview">
+          <div class="preview-item"><img src="img_atadura.png" alt="Atadura"><span>Atadura de Crepom</span></div>
+          <div class="preview-item"><img src="img_gaze_esteril.png" alt="Gaze Estéril"><span>Gaze Estéril</span></div>
+          <div class="preview-item"><img src="img_gaze_rolo.png" alt="Gaze em Rolo"><span>Gaze em Rolo</span></div>
+          <div class="preview-item"><img src="img_campo_op_1.png" alt="Campo Operatório"><span>Campo Operatório</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-stats-row">
+      <div class="stat-box"><div class="stat-n">20+</div><div class="stat-l">Anos de<br>experiência</div></div>
+      <div class="stat-box"><div class="stat-n">18+</div><div class="stat-l">Linhas de<br>produto</div></div>
+      <div class="stat-box"><div class="stat-n">BR</div><div class="stat-l">Atendimento<br>Nacional</div></div>
+    </div>
+  </div>
+
+  <!-- ════ PAGE: PRODUTOS ════ -->
+  <div class="page" id="page-produtos">
+    <div class="page-header">
+      <div>
+        <div class="page-label">Nosso Catálogo</div>
+        <h2 class="page-title">Produtos <em>Hospitalares</em></h2>
+      </div>
+      <a href="http://www.lojatexpharma.com.br" target="_blank" class="btn-primary">Ver Loja Completa</a>
+    </div>
+
+    <div class="filter-tabs" id="filterTabs">
+      <button class="filter-btn active" onclick="filterProducts('todos',this)">Todos</button>
+      <button class="filter-btn" onclick="filterProducts('Curativo',this)">Curativos</button>
+      <button class="filter-btn" onclick="filterProducts('Cirúrgico',this)">Cirúrgico</button>
+      <button class="filter-btn" onclick="filterProducts('EPI',this)">EPI</button>
+      <button class="filter-btn" onclick="filterProducts('Descartável',this)">Descartáveis</button>
+      <button class="filter-btn" onclick="filterProducts('Fixação',this)">Fixação</button>
+      <button class="filter-btn" onclick="filterProducts('Nutrição',this)">Outros</button>
+    </div>
+
+    <div class="products-grid" id="productsGrid"></div>
+
+    <div class="footer-bar">
+      <p>© 2025 Texpharma · São José dos Campos, SP · <span>(012) 3923-7575</span> · <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1f7c70727a6d7c767e735f6b7a676f777e6d727e317c7072317d6d">[email&#160;protected]</a></span></p>
+    </div>
+  </div>
+
+  <!-- ════ PAGE: SOBRE ════ -->
+  <div class="page" id="page-sobre">
+    <div class="sobre-grid">
+      <div class="sobre-card">
+        <img class="sobre-logo"
+          src="https://images.builderservices.io/s/cdn/v1.0/i/m?url=https%3A%2F%2Fstorage.googleapis.com%2Fproduction-hostgator-brasil-v1-0-0%2F850%2F1039850%2FDfvclqUD%2F76140231edaa426fbb109137a9bb157c&methods=resize%2C500%2C5000"
+          alt="Texpharma"
+          onerror="this.style.display='none'">
+        <span class="sobre-badge">+20 Anos</span>
+        <p>Indústria brasileira de produtos médicos hospitalares têxteis. Fabricação própria com maquinário moderno e alto padrão de qualidade em todas as etapas.</p>
+        <div class="numbers-row" style="margin-top:24px;width:100%">
+          <div class="num-card"><div class="num-n">20+</div><div class="num-l">Anos</div></div>
+          <div class="num-card"><div class="num-n">18+</div><div class="num-l">Produtos</div></div>
+          <div class="num-card"><div class="num-n">BR</div><div class="num-l">Nacional</div></div>
+        </div>
+      </div>
+
+      <div class="sobre-right">
+        <div class="page-label">Quem Somos</div>
+        <h2>Uma das principais<br>indústrias <em>do Brasil</em></h2>
+        <p>A Texpharma é fabricante e distribuidora de produtos médicos hospitalares têxteis. Atendemos todo o território nacional com compromisso, qualidade e agilidade — tanto no varejo quanto no atacado.</p>
+        <ul class="about-list">
+          <li>Mais de 20 anos de experiência no setor de saúde</li>
+          <li>Atendimento em capitais e interiores de todo o Brasil</li>
+          <li>Maquinário moderno e alta capacidade de produção contínua</li>
+          <li>Todos os produtos com registro na ANVISA</li>
+          <li>Faturamento rápido e logística eficiente</li>
+          <li>Melhores fios de algodão e controle rigoroso de qualidade</li>
+          <li>Venda no varejo e atacado com menor preço do mercado</li>
+        </ul>
+
+        <div style="margin-top:28px;display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn-primary" href="#" data-page="contato">Solicitar Cotação</a>
+          <a href="http://www.lojatexpharma.com.br" target="_blank" class="btn-ghost">Comprar Online</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bar">
+      <p>© 2025 Texpharma · São José dos Campos, SP · <span>(012) 3923-7575</span></p>
+    </div>
+  </div>
+
+  <!-- ════ PAGE: CONTATO ════ -->
+  <div class="page" id="page-contato">
+    <div class="contato-grid">
+      <div>
+        <div class="page-label">Fale Conosco</div>
+        <h2 class="page-title">Entre em <em>Contato</em></h2>
+        <p style="color:var(--gray);font-size:.93rem;line-height:1.7;margin-top:10px;max-width:400px">Solicite uma cotação ou tire suas dúvidas. Nossa equipe responde com agilidade.</p>
+
+        <div class="contact-cards">
+          <div class="c-card">
+            <div class="c-icon">📍</div>
+            <div><h4>Endereço</h4><p>Rua Loanda, 143 - Chacáras Reunidas<br>São José dos Campos, SP · CEP 12238-330</p></div>
+          </div>
+          <div class="c-card">
+            <div class="c-icon">📞</div>
+            <div><h4>Telefone</h4><a href="tel:01239237575">(012) 3923-7575</a></div>
+          </div>
+          <div class="c-card">
+            <div class="c-icon">✉️</div>
+            <div><h4>E-mail</h4><a href="/cdn-cgi/l/email-protection#4625292b2334252f272a0632233e362e27342b276825292b682434"><span class="__cf_email__" data-cfemail="fa9995979f8899939b96ba8e9f828a929b88979bd4999597d49888">[email&#160;protected]</span></a></div>
+          </div>
+          <div class="c-card">
+            <div class="c-icon">🌐</div>
+            <div><h4>Loja Virtual</h4><a href="http://www.lojatexpharma.com.br" target="_blank">www.lojatexpharma.com.br</a></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="form-title">Solicitar Cotação</p>
+        <form class="contact-form" onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <div class="form-group"><label>Nome</label><input type="text" placeholder="Seu nome completo" required></div>
+            <div class="form-group"><label>Empresa</label><input type="text" placeholder="Nome da empresa"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>E-mail</label><input type="email" placeholder="seu@email.com" required></div>
+            <div class="form-group"><label>Telefone</label><input type="tel" placeholder="(00) 00000-0000"></div>
+          </div>
+          <div class="form-group"><label>Produto de Interesse</label>
+            <select>
+              <option value="">Selecione um produto...</option>
+              <option>Atadura de Crepom</option><option>Compressa de Gaze Estéril</option>
+              <option>Compressa de Gaze 500un</option><option>Campo Operatório</option>
+              <option>Gaze em Rolo</option><option>Máscara Cirúrgica Tripla</option>
+              <option>Máscara KN95</option><option>Touca Descartável TNT</option>
+              <option>Propé Descartável TNT</option><option>Luva de Procedimento</option>
+              <option>Esparadrapo / Micropore</option><option>Fita Autoclave</option>
+              <option>Luva Látex</option><option>Frasco Enteral</option>
+              <option>Outros / Linha completa</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Mensagem</label><textarea rows="4" placeholder="Descreva sua necessidade, quantidade desejada..."></textarea></div>
+          <button type="submit" class="form-submit">Enviar Solicitação →</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="footer-bar">
+      <p>© 2025 Texpharma · Todos os direitos reservados · <span>Fabricação Nacional 🇧🇷</span></p>
+    </div>
+  </div>
+
+</div><!-- /pages-wrap -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <img id="modal-img" class="modal-img" src="" alt="">
+    <h2 id="modal-title"></h2>
+    <p id="modal-body"></p>
+    <div class="modal-actions">
+      <a href="http://www.lojatexpharma.com.br" target="_blank" class="btn-primary" style="font-size:.84rem;padding:11px 22px">Comprar Online</a>
+      <button class="btn-ghost" onclick="closeModal()" data-page="contato" style="font-size:.84rem;padding:11px 22px">Solicitar Cotação</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✅ Solicitação enviada! Entraremos em contato em breve.</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ═══ PRODUCTS DATA ═══
+const products = [
+  {tag:'Curativo',   name:'Atadura de Crepom',           img:'img_atadura.png',         desc:'13 fios/cm², tecido misto de algodão, poliéster e elastano. Tamanhos 6–20 cm, comprimento 1,8 m. Elástica e resistente. Registro ANVISA.'},
+  {tag:'Estéril',    name:'Compressa de Gaze Estéril',   img:'img_gaze_esteril.png',    desc:'Gaze hidrófila estéril 7,5×7,5 cm, 11 fios/cm², 5 dobras, 8 camadas. 100% algodão. Embalagem individual com 5 unidades. Registro ANVISA.'},
+  {tag:'Curativo',   name:'Compressa de Gaze',           img:'img_compressa_gaze.png',  desc:'Compressa não estéril 7,5×7,5 cm, 100% algodão, 5 dobras, 8 camadas. Macia e com alto poder de absorção para curativos e assepsia.'},
+  {tag:'Curativo',   name:'Compressa Gaze 500 Unidades', img:'img_compressa_500_1.png', desc:'Compressa de gaze não estéril Leticia, pacote com 500 unidades. 100% algodão, 5 dobras, 8 camadas. Ideal para alto volume hospitalar.'},
+  {tag:'Cirúrgico',  name:'Campo Operatório 45×50 cm',   img:'img_campo_op_1.png',      desc:'Compressa Cirúrgica Campo Operatório Leticia, 45×50 cm, radiopaco, pacote com 50 unidades. 100% algodão, conforme INMETRO 106/03.'},
+  {tag:'Cirúrgico',  name:'Campo Operatório 25×28 cm',   img:'img_campo_op_3.png',      desc:'Campo operatório Leticia, 25×28 cm estéril, 100% algodão, branqueado, isento de amido e alvejantes. Alto poder de absorção.'},
+  {tag:'Curativo',   name:'Gaze em Rolo',                img:'img_gaze_rolo.png',       desc:'Gaze Hidrófila em Rolo Texpharma, 91×50 cm, 100% algodão, 8 camadas. Para curativos extensos e tamponamentos cirúrgicos.'},
+  {tag:'EPI',        name:'Máscara Cirúrgica Tripla',    img:'img_mascara.png',         desc:'Máscara cirúrgica tripla descartável com filtro bacteriológico. Pacote com 50 unidades. Proteção contra partículas e respingos.'},
+  {tag:'EPI',        name:'Máscara KN95',                img:'img_kn95.png',            desc:'Máscara de proteção KN95 com 5 camadas de filtragem de alta eficiência. Elástico ajustável, clip nasal metálico moldável.'},
+  {tag:'Descartável',name:'Touca Descartável TNT',       img:'img_touca.png',           desc:'Gorro cirúrgico hospitalar em TNT, pacote com 100 unidades. Elástico confortável para centros cirúrgicos, UTIs e áreas controladas.'},
+  {tag:'Descartável',name:'Propé Descartável TNT',       img:'img_prope.png',           desc:'Propé tipo sapatilha em TNT, pacote com 100 unidades. Para ambientes hospitalares, centros cirúrgicos e laboratórios.'},
+  {tag:'EPI',        name:'Luva de Procedimento',        img:'img_luva_proc.png',       desc:'Luva de procedimento descartável, caixa com 100 unidades. Alta qualidade e resistência para procedimentos clínicos e hospitalares.'},
+  {tag:'Fixação',    name:'Esparadrapo Impermeável',     img:'img_esparadrapo.png',     desc:'Esparadrapo impermeável branco, alta aderência. Indicado para fixação de curativos, cateteres e dispositivos médicos.'},
+  {tag:'Fixação',    name:'Fita Micropore',              img:'img_micropore.png',       desc:'Fita micropore hospitalar respirável e hipoalergênica. Fixação delicada de curativos e sensores de monitorização.'},
+  {tag:'Fixação',    name:'Fita Crepe Hospitalar',       img:'img_fita_crepe.png',      desc:'Fita crepe hospitalar de uso geral. Alta aderência e fácil remoção. Disponível em diversas larguras.'},
+  {tag:'Fixação',    name:'Fita Indicadora Autoclave',   img:'img_fita_autoclave.png',  desc:'Fita indicadora para autoclave, 19 mm × 30 m. Super aderente. Indica exposição ao processo de esterilização por vapor.'},
+  {tag:'Nutrição',   name:'Frasco Alimentação Enteral',  img:'img_frasco.png',          desc:'Frasco para alimentação enteral graduado, com tampa e dispositivo de conexão. Para nutrição enteral em ambiente hospitalar.'},
+  {tag:'EPI',        name:'Luva Látex Descartável',      img:'img_luva_latex.png',      desc:'Luva látex descartável com alta resistência e sensibilidade tátil. Tamanhos P, M e G para procedimentos hospitalares.'},
+];
+
+let allCards = [];
+
+function buildCards() {
+  const grid = document.getElementById('productsGrid');
+  products.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'product-card';
+    div.dataset.tag = p.tag;
+    div.innerHTML = `
+      <div class="product-img-wrap"><img src="${p.img}" alt="${p.name}" loading="lazy"></div>
+      <div class="product-body">
+        <div class="p-tag">${p.tag}</div>
+        <h3>${p.name}</h3>
+        <p>${p.desc.substring(0,75)}…</p>
+        <span class="p-btn">Saiba mais</span>
+      </div>`;
+    div.onclick = () => openModal(p.name, p.img, p.desc);
+    grid.appendChild(div);
+    allCards.push(div);
+  });
+  // store card
+  const store = document.createElement('div');
+  store.className = 'product-card store-card';
+  store.dataset.tag = 'loja';
+  store.innerHTML = `
+    <div class="product-img-wrap" style="font-size:3rem;background:rgba(13,148,136,.12)">🛒</div>
+    <div class="product-body">
+      <div class="p-tag">Loja Virtual</div>
+      <h3>Compre Online</h3>
+      <p>Acesse nossa loja virtual e faça seu pedido com praticidade e segurança.</p>
+      <a href="http://www.lojatexpharma.com.br" target="_blank" class="p-btn">Acessar Loja</a>
+    </div>`;
+  grid.appendChild(store);
+}
+
+function filterProducts(tag, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  allCards.forEach(c => {
+    const match = tag === 'todos' || c.dataset.tag === tag ||
+      (tag === 'Nutrição' && ['Nutrição','Esterilização'].includes(c.dataset.tag));
+    c.style.display = match ? '' : 'none';
+  });
+  // always show store card
+  const grid = document.getElementById('productsGrid');
+  const store = grid.lastElementChild;
+  store.style.display = tag === 'todos' ? '' : 'none';
+}
+
+// ═══ NAVIGATION ═══
+let currentPage = 'inicio';
+
+function goTo(pageId) {
+  if (!pageId || pageId === currentPage) return;
+  const current = document.getElementById('page-' + currentPage);
+  const next    = document.getElementById('page-' + pageId);
+  if (!next) return;
+
+  current.classList.remove('active');
+  current.classList.add('exit-left');
+  setTimeout(() => current.classList.remove('exit-left'), 380);
+
+  next.classList.add('active');
+  next.scrollTop = 0;
+  currentPage = pageId;
+
+  // sync all nav links
+  document.querySelectorAll('[data-page]').forEach(el => {
+    el.classList.toggle('active', el.dataset.page === pageId);
+  });
+
+  // close mobile menu if open
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+
+// Single delegated click listener — catches every data-page link
+document.addEventListener('click', function(e) {
+  const link = e.target.closest('[data-page]');
+  if (!link) return;
+  // only intercept anchors / buttons, not external links
+  if (link.tagName === 'A' && link.href && link.href.startsWith('http') && !link.href.includes(location.hostname)) return;
+  e.preventDefault();
+  const page = link.dataset.page;
+  if (page) {
+    closeModal();
+    goTo(page);
+  }
+});
+
+// ═══ MODAL ═══
+function openModal(title, img, body) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').textContent = body;
+  document.getElementById('modal-img').src = img;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+function closeModalOutside(e) { if(e.target.id === 'modal') closeModal(); }
+
+// ══
