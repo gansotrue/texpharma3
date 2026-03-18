@@ -76,7 +76,7 @@ nav{
   transform:translateX(30px);
   transition:opacity .35s ease,transform .35s ease;
 }
-.page.active{opacity:1;pointer-events:all;transform:translateX(0)}
+.page.active{opacity:1 !important;pointer-events:all !important;transform:translateX(0) !important;z-index:2}
 .page.exit-left{opacity:0;transform:translateX(-30px)}
 
 /* ═══ PAGE: INÍCIO ═══ */
@@ -88,7 +88,7 @@ nav{
     radial-gradient(ellipse 70% 60% at 75% 50%,rgba(13,148,136,.18) 0%,transparent 70%),
     radial-gradient(ellipse 45% 45% at 15% 85%,rgba(13,148,136,.1) 0%,transparent 60%),
     linear-gradient(135deg,#0a1628 0%,#0d1e3a 100%);
-  position:relative;overflow:hidden;
+  position:relative;
 }
 .hero-grid-bg{position:absolute;inset:0;opacity:.04;background-image:linear-gradient(var(--teal) 1px,transparent 1px),linear-gradient(90deg,var(--teal) 1px,transparent 1px);background-size:60px 60px;pointer-events:none}
 .hero-left{position:relative;z-index:1;max-width:580px}
@@ -590,15 +590,15 @@ function filterProducts(tag, btn) {
 let currentPage = 'inicio';
 
 function goTo(pageId) {
-  if (!pageId || pageId === currentPage) return;
-  const current = document.getElementById('page-' + currentPage);
-  const next    = document.getElementById('page-' + pageId);
+  const next = document.getElementById('page-' + pageId);
   if (!next) return;
 
-  current.classList.remove('active');
-  current.classList.add('exit-left');
-  setTimeout(() => current.classList.remove('exit-left'), 380);
+  // hide current
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.remove('active','exit-left');
+  });
 
+  // show next
   next.classList.add('active');
   next.scrollTop = 0;
   currentPage = pageId;
@@ -608,22 +608,16 @@ function goTo(pageId) {
     el.classList.toggle('active', el.dataset.page === pageId);
   });
 
-  // close mobile menu if open
+  // close mobile menu
   document.getElementById('mobileMenu').classList.remove('open');
 }
 
-// Single delegated click listener — catches every data-page link
+// Catch ALL data-page clicks via delegation
 document.addEventListener('click', function(e) {
   const link = e.target.closest('[data-page]');
   if (!link) return;
-  // only intercept anchors / buttons, not external links
-  if (link.tagName === 'A' && link.href && link.href.startsWith('http') && !link.href.includes(location.hostname)) return;
   e.preventDefault();
-  const page = link.dataset.page;
-  if (page) {
-    closeModal();
-    goTo(page);
-  }
+  goTo(link.dataset.page);
 });
 
 // ═══ MODAL ═══
